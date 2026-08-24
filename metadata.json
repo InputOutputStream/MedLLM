@@ -1,37 +1,37 @@
 {
-  "team_id": "your-team-id",
-  "domain": "coding_assistants",
-  "language_scope": ["en"],
-  "african_alpha_claim": false,
+  "team_id": "FILL_IN_YOUR_ADTC_TEAM_ID",
+  "domain": "healthcare_medical",
+  "language_scope": ["fr", "sw"],
+  "african_alpha_claim": true,
   "budget_laptop_claim": true,
   "submitter": {
-    "name": "your-name",
-    "email": "your-email@domain.com",
-    "github_handle": "your-github"
+    "name": "FILL_IN_YOUR_NAME",
+    "email": "FILL_IN_YOUR_EMAIL@domain.com",
+    "github_handle": "FILL_IN_YOUR_GITHUB_HANDLE"
   },
   "cross_disciplinary_pairing": {
-    "discipline": "education",
+    "discipline": "healthcare",
     "load_bearing": true,
-    "description": "Brief description of how your model serves a real-world domain."
+    "description": "Offline documentation assistant for clinicians in low-connectivity settings: turns a spoken or typed dictation into a correctly structured, complete French clinical document (compte-rendu de consultation, lettre de sortie), grounded via local RAG over internal report-format rules so the model follows real hospital document structure rather than inventing one. A deterministic French-Swahili medical term dictionary and sentence templates (no second model, no free-form generation) produce a patient-facing Swahili summary from the same structured facts, for cross-lingual handoff. The tool addresses documentation quality, legibility, and handoff time, not record storage -- paper booklets remain the archival record."
   },
   "test_prompts": [
     {
       "prompt_id": "tp_001",
-      "prompt": "Write a Python function that reads a CSV file and returns the column with the highest mean value."
+      "prompt": "Redige un compte-rendu de consultation structure pour: patiente de 34 ans, fievre a 39, cephalees depuis 2 jours, pas d'antecedent connu, tension 11/7."
     },
     {
       "prompt_id": "tp_002",
-      "prompt": "Explain the difference between a list and a tuple in Python, and give one example where each is the better choice."
+      "prompt": "Redige une lettre de sortie pour le patient Benoit: hospitalise 3 jours pour paludisme simple confirme (TDR positif), traite par arthemether-lumefantrine, evolution favorable, apyrexie depuis 48h, sortie ce jour avec traitement complete a domicile, recommandation de revenir en consultation si fievre persiste au-dela de 3 jours."
     }
   ],
   "model": {
-    "name": "SmolLM2-135M-Instruct-Q4_K_M",
+    "name": "Ministral-3-3B-Instruct-2512-Q2_K",
     "runtime": "llama.cpp",
-    "quantization": "GGUF Q4_K_M",
-    "parameters_estimate": "135M",
+    "quantization": "GGUF Q2_K",
+    "parameters_estimate": "3B",
     "packaging": "binary_bundle"
   },
   "_runtime": {
-    "model_path": "model/SmolLM2-135M-Instruct-Q4_K_M.gguf"
+    "model_path": "model/Ministral-3-3B-Instruct-2512-Q2_K.gguf"
   }
 }

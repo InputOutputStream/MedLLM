@@ -1,38 +1,37 @@
 #!/usr/bin/env bash
-# Download your model weight file.
-#
-# Rules:
-#   - Must be idempotent (safe to run multiple times).
-#   - Must download without any credentials (public URL only).
-#   - The output path must match `_runtime.model_path` in metadata.json.
-
+# Downloads the submission's GGUF weight file to model/ -- idempotent,
+# no credentials required.
 set -euo pipefail
 
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MODEL_DIR="$HERE/model"
-MODEL_FILE="$MODEL_DIR/SmolLM2-135M-Instruct-Q4_K_M.gguf"
-
-# ── Replace this URL with your public model weight URL ─────────────────────────
-MODEL_URL="https://huggingface.co/bartowski/SmolLM2-135M-Instruct-GGUF/resolve/main/SmolLM2-135M-Instruct-Q4_K_M.gguf"
-# ───────────────────────────────────────────────────────────────────────────────
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MODEL_DIR="$SCRIPT_DIR/model"
 mkdir -p "$MODEL_DIR"
 
-if [[ -f "$MODEL_FILE" ]]; then
-  echo "model already present at $MODEL_FILE — skipping download"
-  exit 0
-fi
+fetch() {
+  local file="$1" url="$2"
+  if [ -f "$file" ] && [ -s "$file" ]; then
+    echo "Already present: $file -- skipping."
+  else
+    echo "Downloading $file ..."
+    if command -v wget &>/dev/null; then
+      wget -c --progress=bar:force -O "$file" "$url"
+    else
+      curl -L -C - --progress-bar -o "$file" "$url"
+    fi
+  fi
+  head -c1 "$file" | grep -qE '^[<{]' \
+    && { echo "ERROR: $file looks like an error page (HTML/JSON), not a GGUF file. Check auth requirements on the source URL."; exit 1; } \
+    || echo "OK: $file looks like a valid binary."
+}
 
-echo "downloading $MODEL_URL → $MODEL_FILE (~80 MB)…"
+# Primary and only model: French clinical document generation.
+# Q4_K_M was tested and appeared to throttle CPU on an earlier (RAM-constrained)
+# machine; staying on Q2_K, which was verified thermally safe (75C peak,
+# not throttled) and well under the 7GB RAM ceiling -- see REPORT.md Benchmarks.
+fetch "$MODEL_DIR/Ministral-3-3B-Instruct-2512-Q2_K.gguf" \
+  "https://huggingface.co/unsloth/Ministral-3-3B-Instruct-2512-GGUF/resolve/main/Ministral-3-3B-Instruct-2512-Q2_K.gguf?download=true"
 
-if command -v curl > /dev/null 2>&1; then
-  curl -L --fail --progress-bar -o "$MODEL_FILE.partial" "$MODEL_URL"
-elif command -v wget > /dev/null 2>&1; then
-  wget --show-progress -O "$MODEL_FILE.partial" "$MODEL_URL"
-else
-  echo "error: neither curl nor wget found" >&2
-  exit 1
-fi
-
-mv "$MODEL_FILE.partial" "$MODEL_FILE"
-echo "done: $MODEL_FILE"
+# NOTE: no second model is downloaded. The Swahili patient-facing summary
+# is produced by deterministic term-dictionary + template substitution
+# (rag/glossaire_medical.txt + orchestrator's swahili_template.py), not by
+# a second LLM -- see REPORT.md "African-language handling" for rationale.
