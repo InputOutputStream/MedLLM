@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Downloads the submission's GGUF weight file to model/ -- idempotent,
-# no credentials required.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,7 +29,3 @@ fetch() {
 fetch "$MODEL_DIR/Ministral-3-3B-Instruct-2512-Q2_K.gguf" \
   "https://huggingface.co/unsloth/Ministral-3-3B-Instruct-2512-GGUF/resolve/main/Ministral-3-3B-Instruct-2512-Q2_K.gguf?download=true"
 
-# NOTE: no second model is downloaded. The Swahili patient-facing summary
-# is produced by deterministic term-dictionary + template substitution
-# (rag/glossaire_medical.txt + orchestrator's swahili_template.py), not by
-# a second LLM -- see REPORT.md "African-language handling" for rationale.

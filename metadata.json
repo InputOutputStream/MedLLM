@@ -1,13 +1,13 @@
 {
-  "team_id": "FILL_IN_YOUR_ADTC_TEAM_ID",
+  "team_id": "MedSLM",
   "domain": "healthcare_medical",
   "language_scope": ["fr", "sw"],
   "african_alpha_claim": true,
   "budget_laptop_claim": true,
   "submitter": {
-    "name": "FILL_IN_YOUR_NAME",
-    "email": "FILL_IN_YOUR_EMAIL@domain.com",
-    "github_handle": "FILL_IN_YOUR_GITHUB_HANDLE"
+    "name": "EDU GUIEDI Hermann Arnold",
+    "email": "anoldhge@gmail.com",
+    "github_handle": "InputOutputStream"
   },
   "cross_disciplinary_pairing": {
     "discipline": "healthcare",
